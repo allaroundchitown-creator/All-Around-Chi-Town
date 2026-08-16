@@ -708,11 +708,13 @@ function createGalleryCard(media) {
 
   const video = document.createElement('video');
   video.src = media.src;
-  video.preload = 'none';
-  video.poster = 'logo.png';
+  video.preload = 'metadata';
   video.muted = true;
   video.playsInline = true;
   video.setAttribute('aria-hidden', 'true');
+  video.addEventListener('loadedmetadata', () => {
+    if (Number.isFinite(video.duration) && video.duration > 0.1) video.currentTime = 0.1;
+  }, { once: true });
 
   const overlay = document.createElement('div');
   overlay.className = 'gallery-item-overlay';
