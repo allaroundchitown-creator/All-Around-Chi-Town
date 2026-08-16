@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Premium 360 photo booth experiences for weddings, birthdays, school events, and corporate celebrations across Chicagoland.">
+  <meta name="theme-color" content="#070707">
+  <meta property="og:title" content="All Around Chi-Town | 360 Event Experiences">
+  <meta property="og:description" content="Your event, from every angle. Premium 360 video experiences across Chicagoland.">
+  <meta property="og:type" content="website">
+  <title>All Around Chi-Town | 360 Event Experiences</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #070707;
+      --ink: #0d0d0d;
+      --charcoal: #151515;
+      --line: rgba(255,255,255,.12);
+      --white: #f8f6f1;
+      --muted: #aaa79f;
+      --gold: #d7b85a;
+      --gold-bright: #f0d67d;
+      --max: 1240px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: "Barlow", sans-serif; overflow-x: hidden; }
+    body.menu-open, body.modal-open { overflow: hidden; }
+    a { color: inherit; }
+    button, input, select { font: inherit; }
+    img, video { display: block; max-width: 100%; }
+    ::selection { background: var(--gold); color: var(--black); }
+
+    .eyebrow {
+      color: var(--gold);
+      font: 700 .72rem/1 "Barlow Condensed", sans-serif;
+      letter-spacing: .32em;
+      text-transform: uppercase;
+    }
+    .display {
+      font: 900 clamp(3.4rem, 8vw, 8.4rem)/.84 "Barlow Condensed", sans-serif;
+      letter-spacing: -.045em;
+      text-transform: uppercase;
+    }
+    .section-title {
+      font: 900 clamp(2.8rem, 6vw, 5.8rem)/.9 "Barlow Condensed", sans-serif;
+      letter-spacing: -.035em;
+      text-transform: uppercase;
+    }
+    .section-copy { color: var(--muted); font-size: 1.05rem; line-height: 1.75; }
+    .container { width: min(calc(100% - 3rem), var(--max)); margin-inline: auto; }
+    .section { padding: clamp(5.5rem, 10vw, 9rem) 0; }
+
+    .button {
+      align-items: center;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      font: 800 .8rem/1 "Barlow Condensed", sans-serif;
+      gap: .8rem;
+      justify-content: center;
+      letter-spacing: .2em;
+      min-height: 54px;
+      padding: 0 1.8rem;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: transform .25s ease, background .25s ease, border-color .25s ease, color .25s ease;
+    }
+    .button:hover { transform: translateY(-2px); }
+    .button-gold { background: var(--gold); color: var(--black); }
+    .button-gold:hover { background: var(--gold-bright); }
+    .button-ghost { border-color: rgba(255,255,255,.35); color: var(--white); }
+    .button-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+    .nav {
+      align-items: center;
+      display: flex;
+      height: 88px;
+      justify-content: space-between;
+      left: 0;
+      padding: 0 clamp(1.2rem, 4vw, 4rem);
+      position: fixed;
+      right: 0;
+      top: 0;
+      transition: background .3s ease, height .3s ease, border-color .3s ease;
+      z-index: 1000;
+    }
+    .nav.scrolled { background: rgba(7,7,7,.92); border-bottom: 1px solid var(--line); backdrop-filter: blur(18px); height: 72px; }
+    .brand { align-items: center; display: flex; gap: .75rem; text-decoration: none; }
+    .brand img { height: 62px; object-fit: contain; width: 76px; }
+    .brand span { font: 800 .92rem/1 "Barlow Condensed", sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+    .nav-links { align-items: center; display: flex; gap: 2rem; list-style: none; }
+    .nav-links a:not(.button) { color: rgba(255,255,255,.78); font: 700 .72rem/1 "Barlow Condensed", sans-serif; letter-spacing: .18em; text-decoration: none; text-transform: uppercase; transition: color .2s ease; }
+    .nav-links a:not(.button):hover { color: var(--gold); }
+    .menu-toggle { background: transparent; border: 0; color: var(--white); cursor: pointer; display: none; font: 800 .75rem "Barlow Condensed", sans-serif; letter-spacing: .18em; text-transform: uppercase; }
+
+    .hero { align-items: flex-end; display: flex; min-height: 100svh; overflow: hidden; padding: 10rem 0 5rem; position: relative; }
+    .hero-media, .hero-shade { inset: 0; position: absolute; }
+    .hero-media video { height: 100%; object-fit: cover; width: 100%; }
+    .hero-shade { background: linear-gradient(90deg, rgba(7,7,7,.94) 0%, rgba(7,7,7,.48) 55%, rgba(7,7,7,.2) 100%), linear-gradient(0deg, rgba(7,7,7,.92) 0%, transparent 45%, rgba(7,7,7,.4) 100%); }
+    .hero-content { max-width: 900px; position: relative; z-index: 2; }
+    .hero .eyebrow { margin-bottom: 1.6rem; }
+    .hero .display span { color: var(--gold); display: block; }
+    .hero-copy { color: rgba(255,255,255,.82); font-size: clamp(1rem, 2vw, 1.28rem); line-height: 1.6; margin: 1.8rem 0 2.2rem; max-width: 590px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: .8rem; }
+    .trust-line { color: rgba(255,255,255,.65); font: 600 .7rem/1.7 "Barlow Condensed", sans-serif; letter-spacing: .18em; margin-top: 2rem; text-transform: uppercase; }
+    .scroll-cue { align-items: center; bottom: 2.2rem; color: rgba(255,255,255,.55); display: flex; font: 700 .65rem "Barlow Condensed", sans-serif; gap: .8rem; letter-spacing: .2em; position: absolute; right: 4rem; text-transform: uppercase; z-index: 2; }
+    .scroll-cue::before { background: var(--gold); content: ""; height: 1px; width: 52px; }
+
+    .proof-strip { background: var(--white); color: var(--black); }
+    .proof-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .proof-item { border-right: 1px solid rgba(7,7,7,.14); padding: 2.2rem clamp(1.1rem, 2vw, 2rem); }
+    .proof-item:last-child { border-right: 0; }
+    .proof-num { color: var(--gold); font: 900 1rem "Barlow Condensed", sans-serif; }
+    .proof-item h3 { font: 800 1.05rem "Barlow Condensed", sans-serif; letter-spacing: .08em; margin: .65rem 0 .35rem; text-transform: uppercase; }
+    .proof-item p { color: #5c5a55; font-size: .88rem; line-height: 1.5; }
+
+    .experience-grid { align-items: center; display: grid; gap: clamp(3rem, 8vw, 8rem); grid-template-columns: minmax(0,.8fr) minmax(0,1fr); }
+    .experience-media { aspect-ratio: 9/12; background: var(--charcoal); overflow: hidden; position: relative; }
+    .experience-media video { height: 100%; object-fit: cover; width: 100%; }
+    .experience-media::after { border: 1px solid rgba(215,184,90,.35); content: ""; inset: 18px; pointer-events: none; position: absolute; }
+    .experience-copy .section-title { margin: 1.2rem 0 1.8rem; }
+    .experience-copy .section-title span { color: var(--gold); display: block; }
+    .steps { border-top: 1px solid var(--line); margin-top: 2.6rem; }
+    .step { align-items: baseline; border-bottom: 1px solid var(--line); display: grid; gap: 1rem; grid-template-columns: 78px 1fr; padding: 1.2rem 0; }
+    .step small { color: var(--gold); font: 700 .68rem "Barlow Condensed", sans-serif; letter-spacing: .22em; }
+    .step strong { font: 800 1.2rem "Barlow Condensed", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+
+    .scroll-story { height: 150vh; position: relative; }
+    .story-stage { height: 100svh; overflow: hidden; position: sticky; top: 0; }
+    .story-stage > .story-video { height: 100%; inset: 0; object-fit: cover; opacity: 0; position: absolute; transition: opacity .55s ease; width: 100%; }
+    .story-stage > .story-video.active { opacity: 1; }
+    .story-stage::after { background: rgba(7,7,7,.52); content: ""; inset: 0; position: absolute; }
+    .story-copy { inset: 0; position: absolute; z-index: 2; }
+    .story-beat { align-items: center; display: flex; inset: 0; justify-content: center; opacity: 0; pointer-events: none; position: absolute; transition: opacity .45s ease, transform .45s ease; transform: scale(.96); }
+    .story-beat.active { opacity: 1; transform: scale(1); }
+    .story-beat span { font: 900 clamp(4rem, 14vw, 12rem)/.82 "Barlow Condensed", sans-serif; letter-spacing: -.04em; max-width: 92vw; text-align: center; text-transform: uppercase; }
+    .story-beat:last-child span { color: var(--gold); }
+
+    .gallery-head { align-items: end; display: flex; justify-content: space-between; margin-bottom: 3rem; }
+    .gallery-head .section-title { margin-top: 1rem; }
+    .gallery-head .section-copy { max-width: 430px; }
+    .video-wall { display: grid; gap: .7rem; grid-template-columns: repeat(12, 1fr); }
+    .video-card { background: var(--charcoal); border: 0; cursor: pointer; grid-column: span 4; overflow: hidden; padding: 0; position: relative; }
+    .video-card:nth-child(2), .video-card:nth-child(5) { transform: translateY(2.5rem); }
+    .video-card video { aspect-ratio: 9/14; background: var(--ink); height: 100%; object-fit: cover; transition: transform .5s ease; width: 100%; }
+    .video-card:hover video { transform: scale(1.025); }
+    .video-card::after { align-items: center; background: rgba(7,7,7,.24); border: 1px solid rgba(255,255,255,.8); border-radius: 50%; color: var(--white); content: "PLAY"; display: flex; font: 800 .62rem "Barlow Condensed", sans-serif; height: 58px; justify-content: center; left: 50%; letter-spacing: .12em; pointer-events: none; position: absolute; top: 50%; transform: translate(-50%,-50%); transition: background .25s ease, color .25s ease; width: 58px; }
+    .video-card:hover::after { background: var(--gold); border-color: var(--gold); color: var(--black); }
+    .gallery-more { margin-top: 5.5rem; text-align: center; }
+
+    .packages { background: var(--white); color: var(--black); }
+    .packages-head { text-align: center; }
+    .packages-head .section-title { margin: 1rem auto 1.6rem; }
+    .inclusions { display: flex; flex-wrap: wrap; gap: .7rem 1.8rem; justify-content: center; margin: 2.2rem auto 3.5rem; max-width: 900px; }
+    .inclusions span { color: #57544d; font-size: .9rem; }
+    .inclusions span::before { color: #9d7d23; content: "•"; margin-right: .65rem; }
+    .package-grid { display: grid; gap: 1rem; grid-template-columns: repeat(3, 1fr); }
+    .package-card { background: #ece9e1; display: flex; flex-direction: column; min-height: 430px; padding: 2.4rem; position: relative; }
+    .package-card.featured { background: var(--black); color: var(--white); transform: translateY(-1rem); }
+    .popular { background: var(--gold); color: var(--black); font: 800 .65rem "Barlow Condensed", sans-serif; letter-spacing: .2em; padding: .55rem .8rem; position: absolute; right: 0; text-transform: uppercase; top: 0; }
+    .package-name { color: #8c6d18; font: 800 .75rem "Barlow Condensed", sans-serif; letter-spacing: .28em; text-transform: uppercase; }
+    .package-price { font: 900 4.2rem/.9 "Barlow Condensed", sans-serif; letter-spacing: -.04em; margin: 1.2rem 0 .4rem; }
+    .package-hours { color: #6e6a61; font-size: .9rem; }
+    .featured .package-hours { color: var(--muted); }
+    .package-card p { color: #68645c; line-height: 1.65; margin: 2rem 0; }
+    .featured p { color: var(--muted); }
+    .package-best { border-top: 1px solid rgba(7,7,7,.14); font-size: .88rem; margin-top: auto; padding-top: 1.4rem; }
+    .featured .package-best { border-color: var(--line); }
+    .package-card .button { margin-top: 1.5rem; width: 100%; }
+
+    .events { min-height: 88svh; overflow: hidden; position: relative; }
+    .events > video { height: 100%; inset: 0; object-fit: cover; position: absolute; width: 100%; }
+    .events::after { background: linear-gradient(90deg, rgba(7,7,7,.95), rgba(7,7,7,.56)); content: ""; inset: 0; position: absolute; }
+    .events-inner { padding-block: clamp(6rem, 12vw, 10rem); position: relative; z-index: 2; }
+    .event-list { border-top: 1px solid rgba(255,255,255,.25); margin-top: 3rem; max-width: 800px; }
+    .event-row { align-items: center; border-bottom: 1px solid rgba(255,255,255,.25); display: grid; gap: 1.5rem; grid-template-columns: 1fr 1.2fr; padding: 1.35rem 0; }
+    .event-row strong { font: 900 clamp(1.5rem, 3vw, 2.5rem) "Barlow Condensed", sans-serif; text-transform: uppercase; }
+    .event-row span { color: rgba(255,255,255,.7); line-height: 1.5; }
+
+    .custom-grid { align-items: center; display: grid; gap: clamp(3rem, 7vw, 7rem); grid-template-columns: 1fr 1fr; }
+    .custom-copy .section-title { margin: 1rem 0 1.5rem; }
+    .custom-list { display: grid; grid-template-columns: 1fr 1fr; margin-top: 2rem; }
+    .custom-list span { border-bottom: 1px solid var(--line); color: rgba(255,255,255,.82); font: 700 .82rem "Barlow Condensed", sans-serif; letter-spacing: .12em; padding: 1rem 0; text-transform: uppercase; }
+    .custom-media { aspect-ratio: 4/5; background: var(--charcoal); overflow: hidden; position: relative; }
+    .custom-media video { height: 100%; object-fit: cover; width: 100%; }
+    .custom-badge { background: var(--gold); bottom: 1.5rem; color: var(--black); font: 900 .78rem "Barlow Condensed", sans-serif; left: 1.5rem; letter-spacing: .18em; padding: .9rem 1.1rem; position: absolute; text-transform: uppercase; }
+
+    .quote { background: var(--gold); color: var(--black); text-align: center; }
+    .stars { font-size: 1.1rem; letter-spacing: .25em; }
+    blockquote { font: 900 clamp(2.4rem, 6vw, 5.6rem)/.94 "Barlow Condensed", sans-serif; letter-spacing: -.03em; margin: 1.4rem auto; max-width: 1050px; text-transform: uppercase; }
+    .quote cite { font-style: normal; font-weight: 600; }
+
+    .availability { background: var(--ink); }
+    .availability-grid { align-items: center; display: grid; gap: clamp(3rem, 8vw, 8rem); grid-template-columns: 1fr 1fr; }
+    .availability .section-title { margin: 1rem 0 1.4rem; }
+    .date-form { background: var(--black); border: 1px solid var(--line); padding: clamp(1.5rem, 4vw, 3rem); }
+    .field { margin-bottom: 1rem; }
+    .field label { color: var(--muted); display: block; font: 700 .67rem "Barlow Condensed", sans-serif; letter-spacing: .2em; margin-bottom: .55rem; text-transform: uppercase; }
+    .field input, .field select { background: var(--charcoal); border: 1px solid var(--line); border-radius: 0; color: var(--white); min-height: 52px; outline: none; padding: 0 1rem; width: 100%; }
+    .field input:focus, .field select:focus { border-color: var(--gold); }
+    .date-form .button { margin-top: .5rem; width: 100%; }
+    .form-note { color: var(--muted); font-size: .78rem; line-height: 1.55; margin-top: .9rem; text-align: center; }
+
+    .footer { border-top: 1px solid var(--line); padding: 4rem 0 7rem; }
+    .footer-grid { align-items: end; display: grid; gap: 2rem; grid-template-columns: 1fr auto; }
+    .footer-brand { align-items: center; display: flex; gap: 1rem; }
+    .footer-brand img { height: 82px; width: 100px; object-fit: contain; }
+    .footer-brand strong { display: block; font: 900 1.3rem "Barlow Condensed", sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+    .footer-brand span { color: var(--muted); font-size: .8rem; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 1.2rem; justify-content: flex-end; }
+    .footer-links a { color: var(--muted); font-size: .82rem; text-decoration: none; }
+    .footer-links a:hover { color: var(--gold); }
+
+    .mobile-cta { bottom: 0; display: none; left: 0; padding: .7rem; position: fixed; right: 0; z-index: 1200; }
+    .mobile-cta .button { box-shadow: 0 8px 30px rgba(0,0,0,.5); width: 100%; }
+
+    .lightbox { align-items: center; background: rgba(0,0,0,.94); display: none; inset: 0; justify-content: center; padding: 2rem; position: fixed; z-index: 2000; }
+    .lightbox.open { display: flex; }
+    .lightbox video { max-height: 88vh; max-width: 92vw; }
+    .lightbox-close { background: var(--gold); border: 0; color: var(--black); cursor: pointer; font: 900 1rem "Barlow Condensed", sans-serif; height: 44px; position: fixed; right: 1.2rem; top: 1.2rem; width: 44px; }
+
+    [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+    [data-reveal].visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 900px) {
+      .nav { height: 74px; }
+      .brand img { height: 52px; width: 64px; }
+      .menu-toggle { display: block; }
+      .nav-links { align-items: stretch; background: rgba(7,7,7,.98); flex-direction: column; gap: 0; inset: 74px 0 auto; padding: 2rem 1.2rem; position: fixed; transform: translateY(-130%); transition: transform .35s ease; }
+      .nav-links.open { transform: translateY(0); }
+      .nav-links li { border-bottom: 1px solid var(--line); }
+      .nav-links a:not(.button) { display: block; font-size: .9rem; padding: 1.2rem 0; }
+      .nav-links .button { margin-top: 1rem; width: 100%; }
+      .hero { padding-bottom: 6.5rem; }
+      .hero-shade { background: linear-gradient(0deg, rgba(7,7,7,.96), rgba(7,7,7,.2) 75%, rgba(7,7,7,.45)); }
+      .scroll-cue { display: none; }
+      .proof-grid { grid-template-columns: 1fr 1fr; }
+      .proof-item:nth-child(2) { border-right: 0; }
+      .proof-item:nth-child(-n+2) { border-bottom: 1px solid rgba(7,7,7,.14); }
+      .experience-grid, .custom-grid, .availability-grid { grid-template-columns: 1fr; }
+      .experience-media { aspect-ratio: 4/5; max-height: 720px; }
+      .gallery-head { align-items: start; flex-direction: column; gap: 1rem; }
+      .video-card { grid-column: span 6; }
+      .video-card:nth-child(2), .video-card:nth-child(5) { transform: none; }
+      .package-grid { grid-template-columns: 1fr; }
+      .package-card.featured { transform: none; }
+      .footer-grid { align-items: start; grid-template-columns: 1fr; }
+      .footer-links { justify-content: flex-start; }
+      .mobile-cta { display: block; }
+    }
+
+    @media (max-width: 560px) {
+      .container { width: min(calc(100% - 2rem), var(--max)); }
+      .section { padding: 5rem 0; }
+      .hero-actions .button { width: 100%; }
+      .trust-line { font-size: .62rem; }
+      .proof-grid { grid-template-columns: 1fr; }
+      .proof-item { border-bottom: 1px solid rgba(7,7,7,.14); border-right: 0; }
+      .video-card { grid-column: span 12; }
+      .video-card:nth-child(n+5) { display: none; }
+      .gallery-more { margin-top: 2rem; }
+      .event-row { grid-template-columns: 1fr; }
+      .custom-list { grid-template-columns: 1fr; }
+      .footer-brand { align-items: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      [data-reveal] { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav" id="nav" aria-label="Primary navigation">
+    <a class="brand" href="#top" aria-label="All Around Chi-Town home">
+      <img src="logo.png" alt="">
+      <span>All Around Chi-Town</span>
+    </a>
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#packages">Packages</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="book.html#faq">FAQ</a></li>
+      <li><a class="button button-gold" href="book.html#availability">Book Now</a></li>
+    </ul>
+  </nav>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-media" aria-hidden="true">
+        <video src="Site Media/360 Loop.mp4" autoplay muted loop playsinline poster="logo.png"></video>
+      </div>
+      <div class="hero-shade"></div>
+      <div class="container">
+        <div class="hero-content">
+          <p class="eyebrow">Premium 360 event experiences</p>
+          <h1 class="display">Your event.<span>From every angle.</span></h1>
+          <p class="hero-copy">360&deg; of fun, captured in unforgettable slow motion and delivered ready to share.</p>
+          <div class="hero-actions">
+            <a class="button button-gold" href="book.html#availability">Check Availability <span aria-hidden="true">&rarr;</span></a>
+            <a class="button button-ghost" href="#packages">View Packages</a>
+          </div>
+          <p class="trust-line">Weddings &bull; Birthdays &bull; School Events &bull; Corporate Events &bull; Chicagoland</p>
+        </div>
+      </div>
+      <div class="scroll-cue" aria-hidden="true">Discover the experience</div>
+    </section>
+
+    <section class="proof-strip" aria-label="What every experience includes">
+      <div class="proof-grid">
+        <article class="proof-item"><span class="proof-num">01</span><h3>360&deg; Video</h3><p>Professional slow-motion videos.</p></article>
+        <article class="proof-item"><span class="proof-num">02</span><h3>Instant Sharing</h3><p>Guests get their videos right away.</p></article>
+        <article class="proof-item"><span class="proof-num">03</span><h3>Custom Overlays</h3><p>Designed specifically for your event.</p></article>
+        <article class="proof-item"><span class="proof-num">04</span><h3>Booth Attendant</h3><p>We set up, run it, and handle everything.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="experience">
+      <div class="container experience-grid">
+        <div class="experience-media" data-reveal>
+          <video src="video3.mov" autoplay muted loop playsinline poster="logo.png"></video>
+        </div>
+        <div class="experience-copy" data-reveal>
+          <p class="eyebrow">The 360 experience</p>
+          <h2 class="section-title">Not just a photo booth.<span>The center of the party.</span></h2>
+          <p class="section-copy">Your guests step onto the platform, the camera sweeps around them, and every move becomes a polished slow-motion video built for Instagram, TikTok, and the group chat.</p>
+          <div class="steps">
+            <div class="step"><small>STEP 01</small><strong>Step on</strong></div>
+            <div class="step"><small>STEP 02</small><strong>Strike a pose</strong></div>
+            <div class="step"><small>STEP 03</small><strong>Share it</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scroll-story" aria-label="The 360 experience">
+      <div class="story-stage">
+        <video class="story-video active" src="video4.mp4" autoplay muted loop playsinline poster="logo.png" aria-hidden="true"></video>
+        <video class="story-video" src="Site Media/Bday Party 8.14.26/13-20260814-193914.546426-slomo.mp4" muted loop playsinline preload="metadata" poster="logo.png" aria-hidden="true"></video>
+        <div class="story-copy">
+          <div class="story-beat active" data-story-index="0"><span>Step on.</span></div>
+          <div class="story-beat" data-story-index="1"><span>Let the fun begin.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="gallery-preview">
+      <div class="container">
+        <div class="gallery-head" data-reveal>
+          <div><p class="eyebrow">See the experience</p><h2 class="section-title">Real events.<br>Real reactions.</h2></div>
+          <p class="section-copy">No stock moments. Just real people making the kind of videos they replay before the night is even over.</p>
+        </div>
+        <div class="video-wall">
+          <button class="video-card" type="button" data-src="Site Media/360 Loop.mp4" aria-label="Play 360 booth highlight">
+            <video data-video-src="Site Media/360 Loop.mp4" muted loop playsinline preload="none" poster="logo.png"></video>
+          </button>
+          <button class="video-card" type="button" data-src="Site Media/Wedding 5.15.26/10-20260515-205331.498693-slomo.mp4" aria-label="Play wedding highlight">
+            <video data-video-src="Site Media/Wedding 5.15.26/10-20260515-205331.498693-slomo.mp4" muted loop playsinline preload="none" poster="logo.png"></video>
+          </button>
+          <button class="video-card" type="button" data-src="Site Media/Bday Party 8.14.26/10-20260814-185500.615649-slomo.mp4" aria-label="Play birthday highlight">
+            <video data-video-src="Site Media/Bday Party 8.14.26/10-20260814-185500.615649-slomo.mp4" muted loop playsinline preload="none" poster="logo.png"></video>
+          </button>
+          <button class="video-card" type="button" data-src="Site Media/Imat Day/10-20260207-202547.185108-slomo.mp4" aria-label="Play event highlight">
+            <video data-video-src="Site Media/Imat Day/10-20260207-202547.185108-slomo.mp4" muted loop playsinline preload="none" poster="logo.png"></video>
+          </button>
+          <button class="video-card" type="button" data-src="Site Media/Ladies of the Light 2/10-20260501-193118.136056-slomo.mp4" aria-label="Play celebration highlight">
+            <video data-video-src="Site Media/Ladies of the Light 2/10-20260501-193118.136056-slomo.mp4" muted loop playsinline preload="none" poster="logo.png"></video>
+          </button>
+          <button class="video-card" type="button" data-src="Site Media/Wedding 3.23.24/10-20240608-213929.000115-slomo.mp4" aria-label="Play party highlight">
+            <video data-video-src="Site Media/Wedding 3.23.24/10-20240608-213929.000115-slomo.mp4" muted loop playsinline preload="none" poster="logo.png"></video>
+          </button>
+        </div>
+        <div class="gallery-more"><a class="button button-ghost" href="gallery.html">View the full gallery <span aria-hidden="true">&rarr;</span></a></div>
+      </div>
+    </section>
+
+    <section class="section packages" id="packages">
+      <div class="container">
+        <header class="packages-head" data-reveal>
+          <p class="eyebrow">Choose your experience</p>
+          <h2 class="section-title">Simple packages.<br>Unforgettable results.</h2>
+          <p class="section-copy">Every experience includes:</p>
+        </header>
+        <div class="inclusions">
+          <span>Unlimited videos</span><span>Custom overlay</span><span>Props</span><span>Booth attendant</span><span>Instant sharing</span><span>Setup &amp; teardown</span>
+        </div>
+        <div class="package-grid">
+          <article class="package-card" data-reveal>
+            <span class="package-name">Gold</span><div class="package-price">$299</div><div class="package-hours">2 hours</div>
+            <p>Everything a smaller party or celebration needs to become the event everyone talks about.</p>
+            <div class="package-best">Best for birthdays, showers, and intimate celebrations.</div>
+            <a class="button button-ghost" style="border-color:#928e84;color:#111" href="book.html?package=gold#availability">Check your date</a>
+          </article>
+          <article class="package-card featured" data-reveal>
+            <span class="popular">Most popular</span><span class="package-name">Platinum</span><div class="package-price">$499</div><div class="package-hours">4 hours</div>
+            <p>More time for more guests, more spins, and more of the night captured from every angle.</p>
+            <div class="package-best">Best for weddings, school events, and larger parties.</div>
+            <a class="button button-gold" href="book.html?package=platinum#availability">Check your date</a>
+          </article>
+          <article class="package-card" data-reveal>
+            <span class="package-name">Diamond</span><div class="package-price">$699</div><div class="package-hours">6 hours</div>
+            <p>The full-event experience, with the booth ready from the first arrival through the final song.</p>
+            <div class="package-best">Best for all-night receptions, galas, and major celebrations.</div>
+            <a class="button button-ghost" style="border-color:#928e84;color:#111" href="book.html?package=diamond#availability">Check your date</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="events">
+      <video src="hero-video.mp4" autoplay muted loop playsinline poster="logo.png" aria-hidden="true"></video>
+      <div class="container events-inner">
+        <p class="eyebrow">Made for your moment</p>
+        <h2 class="section-title">Every crowd.<br>Every celebration.</h2>
+        <div class="event-list">
+          <div class="event-row"><strong>Weddings</strong><span>Make the reception impossible to forget.</span></div>
+          <div class="event-row"><strong>Birthdays</strong><span>Turn the party into a movie.</span></div>
+          <div class="event-row"><strong>School events</strong><span>Homecoming, prom, dances, and celebrations.</span></div>
+          <div class="event-row"><strong>Corporate</strong><span>Branded experiences people actually share.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container custom-grid">
+        <div class="custom-copy" data-reveal>
+          <p class="eyebrow">Designed around you</p>
+          <h2 class="section-title">Make it yours.</h2>
+          <p class="section-copy">Your booth should look like it belongs at your event. We tailor the finished experience to your names, colors, theme, and brand.</p>
+          <div class="custom-list">
+            <span>Custom event overlays</span><span>Custom branding</span><span>Music selection</span><span>Event-specific designs</span>
+          </div>
+        </div>
+        <div class="custom-media" data-reveal>
+          <video src="video3.mov" autoplay muted loop playsinline poster="logo.png"></video>
+          <span class="custom-badge">Your event. Your look.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section quote">
+      <div class="container">
+        <div class="stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <blockquote>&ldquo;Everyone was on the booth all night.&rdquo;</blockquote>
+        <cite>Real All Around Chi-Town event guest</cite>
+      </div>
+    </section>
+
+    <section class="section availability" id="availability">
+      <div class="container availability-grid">
+        <div data-reveal>
+          <p class="eyebrow">Ready when you are</p>
+          <h2 class="section-title">Give your guests something to remember.</h2>
+          <p class="section-copy">Tell us your date and event type. We will take you straight to the booking page to finish the details.</p>
+        </div>
+        <form class="date-form" id="date-form" data-reveal>
+          <div class="field"><label for="event-date">Event date</label><input id="event-date" name="eventDate" type="date" required></div>
+          <div class="field"><label for="event-type">Event type</label><select id="event-type" name="eventType" required><option value="">Choose your event</option><option>Wedding</option><option>Birthday</option><option>School Event</option><option>Corporate Event</option><option>Other</option></select></div>
+          <button class="button button-gold" type="submit">Check my date <span aria-hidden="true">&rarr;</span></button>
+          <p class="form-note">No obligation. We will confirm availability before anything is booked.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand"><img src="logo.png" alt=""><div><strong>All Around Chi-Town</strong><span>360 degrees of fun across Chicagoland.</span></div></div>
+      <div class="footer-links">
+        <a href="mailto:bookings@allaroundchitown.com">Email</a>
+        <a href="https://www.instagram.com" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.tiktok.com/@allaroundchitown/" target="_blank" rel="noopener">TikTok</a>
+        <a href="https://www.facebook.com/profile.php?id=61556657095887" target="_blank" rel="noopener">Facebook</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="mobile-cta"><a class="button button-gold" href="book.html#availability">Check Availability</a></div>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Video preview">
+    <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close video">X</button>
+    <video id="lightbox-video" controls playsinline></video>
+  </div>
+
+  <script>
+    const nav = document.getElementById('nav');
+    const menuButton = document.getElementById('menu-toggle');
+    const navLinks = document.getElementById('nav-links');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxVideo = document.getElementById('lightbox-video');
+
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 24), { passive: true });
+
+    menuButton.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      menuButton.setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('menu-open', open);
+    });
+    navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+    }));
+
+    const revealObserver = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    }), { threshold: .12 });
+    document.querySelectorAll('[data-reveal]').forEach(element => revealObserver.observe(element));
+
+    const hydrateVideo = video => {
+      if (!video.src && video.dataset.videoSrc) {
+        video.src = video.dataset.videoSrc;
+        video.load();
+      }
+    };
+    const videoObserver = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        hydrateVideo(entry.target);
+        videoObserver.unobserve(entry.target);
+      }
+    }), { rootMargin: '300px' });
+    document.querySelectorAll('[data-video-src]').forEach(video => videoObserver.observe(video));
+
+    document.querySelectorAll('.video-card').forEach(card => {
+      const preview = card.querySelector('video');
+      card.addEventListener('mouseenter', () => {
+        hydrateVideo(preview);
+        preview.play().catch(() => {});
+      });
+      card.addEventListener('mouseleave', () => {
+        preview.pause();
+        preview.currentTime = 0;
+      });
+      card.addEventListener('click', () => {
+        lightboxVideo.src = card.dataset.src;
+        lightbox.classList.add('open');
+        document.body.classList.add('modal-open');
+        lightboxVideo.play().catch(() => {});
+        document.getElementById('lightbox-close').focus();
+      });
+    });
+
+    const closeLightbox = () => {
+      lightbox.classList.remove('open');
+      document.body.classList.remove('modal-open');
+      lightboxVideo.pause();
+      lightboxVideo.removeAttribute('src');
+      lightboxVideo.load();
+    };
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', event => { if (event.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox(); });
+
+    const storySection = document.querySelector('.scroll-story');
+    const storyBeats = [...document.querySelectorAll('.story-beat')];
+    const storyVideos = [...document.querySelectorAll('.story-video')];
+    let activeStoryIndex = -1;
+    const updateStory = () => {
+      const bounds = storySection.getBoundingClientRect();
+      const scrollDistance = Math.max(storySection.offsetHeight - window.innerHeight, 1);
+      const progress = Math.min(1, Math.max(0, -bounds.top / scrollDistance));
+      const nextIndex = progress < .45 ? 0 : 1;
+      if (nextIndex === activeStoryIndex) return;
+      activeStoryIndex = nextIndex;
+      storyBeats.forEach((beat, index) => beat.classList.toggle('active', index === nextIndex));
+      storyVideos.forEach((video, index) => {
+        const active = index === nextIndex;
+        video.classList.toggle('active', active);
+        if (active) video.play().catch(() => {});
+        else video.pause();
+      });
+    };
+    window.addEventListener('scroll', updateStory, { passive: true });
+    window.addEventListener('resize', updateStory);
+    updateStory();
+
+    const dateInput = document.getElementById('event-date');
+    dateInput.min = new Date().toISOString().split('T')[0];
+    document.getElementById('date-form').addEventListener('submit', event => {
+      event.preventDefault();
+      const params = new URLSearchParams(new FormData(event.currentTarget));
+      window.location.href = `book.html?${params.toString()}#availability`;
+    });
+  </script>
+</body>
+</html>
