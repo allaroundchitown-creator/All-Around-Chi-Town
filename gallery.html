@@ -541,14 +541,15 @@
   /* ── MASONRY GRID ── */
   .gallery-masonry { columns: 3; gap: 4px; max-width: 1200px; margin: 0 auto; }
   .gallery-masonry-item { break-inside: avoid; margin-bottom: 4px; position: relative; overflow: hidden; cursor: pointer; background: var(--dark2); }
-  .gallery-masonry-item img, .gallery-masonry-item video { width: 100%; display: block; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
-  .gallery-masonry-item:hover img, .gallery-masonry-item:hover video { transform: scale(1.04); }
+  .gallery-masonry-item img, .gallery-masonry-item video, .gallery-masonry-item iframe { width: 100%; display: block; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
+  .gallery-masonry-item:hover img, .gallery-masonry-item:hover video, .gallery-masonry-item:hover iframe { transform: scale(1.04); }
   .gallery-item-overlay { position: absolute; inset: 0; background: rgba(9,9,9,0); display: flex; align-items: center; justify-content: center; transition: background 0.3s; }
   .gallery-masonry-item:hover .gallery-item-overlay { background: rgba(9,9,9,0.3); }
   .gallery-play-icon { width: 48px; height: 48px; border-radius: 50%; background: rgba(201,168,76,0.15); border: 1.5px solid rgba(201,168,76,0.6); display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0.8); transition: opacity 0.3s, transform 0.3s; backdrop-filter: blur(4px); }
   .gallery-masonry-item:hover .gallery-play-icon { opacity: 1; transform: scale(1); }
   .gallery-play-icon svg { width: 18px; height: 18px; fill: var(--gold); margin-left: 2px; }
-  .gallery-masonry-item video { aspect-ratio: 9 / 16; object-fit: contain; background: radial-gradient(circle at center, #24211b, #090909 68%); }
+  .gallery-masonry-item video, .gallery-masonry-item iframe { aspect-ratio: 9 / 16; object-fit: contain; background: radial-gradient(circle at center, #24211b, #090909 68%); }
+  .gallery-masonry-item iframe { border: 0; pointer-events: none; }
   .gallery-status { max-width: 1200px; margin: 0 auto 1.5rem; color: var(--gray); font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 0.2em; text-align: center; text-transform: uppercase; }
   .gallery-load-wrap { display: flex; justify-content: center; padding-top: 2.5rem; }
   .gallery-load-more { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; padding: 0.9rem 2rem; border: 1px solid var(--gold); background: transparent; color: var(--gold); cursor: pointer; transition: background 0.25s, color 0.25s; }
@@ -651,7 +652,6 @@
   <a href="#" class="footer-logo"><img src="logo.png" alt="All Around Chi-Town"></a>
 </footer>
 
-<script src="gallery-media.js"></script>
 <script src="bunny-media.js"></script>
 <script>
 document.body.classList.add('js-loaded');
@@ -678,20 +678,11 @@ const obs = new IntersectionObserver(entries => entries.forEach(e => {
 }), {threshold: 0.1});
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-// Merge Bunny Stream playback into the local gallery as uploads become available.
+// The public gallery is powered entirely by the current Bunny Stream library.
 const PAGE_SIZE = 18;
-const allMedia = Array.isArray(window.SITE_MEDIA) ? [...window.SITE_MEDIA] : [];
-const bunnyByTitle = new Map();
-(Array.isArray(window.BUNNY_MEDIA) ? window.BUNNY_MEDIA : []).forEach(video => {
-  const key = video.title.toLowerCase();
-  if (!bunnyByTitle.has(key)) bunnyByTitle.set(key, []);
-  bunnyByTitle.get(key).push(video);
-});
-allMedia.forEach(media => {
-  const filename = decodeURIComponent(media.src.split('/').pop()).toLowerCase();
-  const matches = bunnyByTitle.get(filename);
-  if (matches?.length) Object.assign(media, matches.shift());
-});
+const allMedia = (Array.isArray(window.BUNNY_MEDIA) ? window.BUNNY_MEDIA : [])
+  .filter(video => video.ready)
+  .map(video => ({ ...video, type: 'video' }));
 let visibleCount = PAGE_SIZE;
 
 function filteredMedia() {
@@ -706,15 +697,12 @@ function createGalleryCard(media) {
   item.setAttribute('role', 'button');
   item.setAttribute('aria-label', `Play ${media.name}`);
 
-  const video = document.createElement('video');
-  video.src = media.src;
-  video.preload = 'metadata';
-  video.muted = true;
-  video.playsInline = true;
+  const video = document.createElement('iframe');
+  video.src = `${media.embed}?autoplay=false&preload=false&responsive=true`;
+  video.loading = 'lazy';
+  video.tabIndex = -1;
+  video.title = '';
   video.setAttribute('aria-hidden', 'true');
-  video.addEventListener('loadedmetadata', () => {
-    if (Number.isFinite(video.duration) && video.duration > 0.1) video.currentTime = 0.1;
-  }, { once: true });
 
   const overlay = document.createElement('div');
   overlay.className = 'gallery-item-overlay';
