@@ -1,0 +1,4 @@
+import { NextResponse } from "next/server";
+import { generateOutreach } from "@/lib/ai";
+import { hasDatabase, prisma } from "@/lib/prisma";
+export async function POST(_: Request, { params }: { params: Promise<{ id: string }> }) { if (!hasDatabase()) return NextResponse.json({ error: "Connect PostgreSQL and configure OpenAI to generate outreach." }, { status: 503 }); try { const { id } = await params; const lead = await prisma.lead.findUnique({ where: { id } }); if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 }); const draft = await generateOutreach({ businessName: lead.businessName, category: lead.category, services: lead.serviceTypes, eventTypes: lead.eventTypes, location: lead.city, fitReason: lead.fitReason }); return NextResponse.json(draft); } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "AI service unavailable" }, { status: 503 }); } }

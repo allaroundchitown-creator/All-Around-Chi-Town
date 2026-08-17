@@ -1,0 +1,2 @@
+import Link from "next/link";
+export function MobileNav() { return <div className="flex items-center justify-between border-b border-white/8 px-5 py-4 lg:hidden"><Link href="/" className="font-semibold"><span className="text-[#d5b36c]">AACT</span> CRM</Link><nav className="flex gap-4 text-xs text-zinc-400"><Link href="/leads">Leads</Link><Link href="/follow-ups">Follow ups</Link><Link href="/settings">Settings</Link></nav></div>; }

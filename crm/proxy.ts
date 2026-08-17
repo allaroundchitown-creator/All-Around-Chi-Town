@@ -1,0 +1,3 @@
+import { NextRequest, NextResponse } from "next/server";
+export function proxy(request: NextRequest) { const password = process.env.CRM_BASIC_AUTH_PASSWORD; if (!password) return NextResponse.next(); const expected = `Basic ${Buffer.from(`${process.env.CRM_BASIC_AUTH_USER ?? "admin"}:${password}`).toString("base64")}`; if (request.headers.get("authorization") === expected) return NextResponse.next(); return new NextResponse("Authentication required", { status: 401, headers: { "WWW-Authenticate": 'Basic realm="All Around Chi Town CRM"' } }); }
+export const config = { matcher: ["/((?!_next/static|_next/image|favicon.ico|api/inquiries).*)"] };

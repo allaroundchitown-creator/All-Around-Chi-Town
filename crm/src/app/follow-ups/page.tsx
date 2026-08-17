@@ -1,0 +1,4 @@
+import { LeadTable } from "@/components/lead-table";
+import { getLeads } from "@/lib/data";
+export const dynamic = "force-dynamic";
+export default async function FollowUpsPage() { const end = new Date(); end.setHours(23, 59, 59, 999); const raw = (await getLeads()).filter((lead) => lead.nextFollowUpAt && new Date(lead.nextFollowUpAt) <= end && !["BOOKED", "LOST", "NOT_INTERESTED"].includes(lead.status)); const leads = raw.map((lead) => ({ ...lead, createdAt: lead.createdAt.toISOString(), nextFollowUpAt: lead.nextFollowUpAt?.toISOString() ?? null })); return <div className="page-shell"><p className="eyebrow">Daily action list</p><h1 className="page-title">Follow up today</h1><p className="page-copy">A focused queue of conversations that need attention now.</p><div className="pt-7"><LeadTable leads={leads} /></div></div>; }

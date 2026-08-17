@@ -1,0 +1,3 @@
+import { describe, expect, it } from "vitest";
+import { scoreLead } from "@/lib/scoring";
+describe("lead scoring", () => { it("scores, clamps, and classifies a strong local lead", () => { const result = scoreLead({ category: "Wedding planner", city: "Chicago", email: "hello@example.com", instagramUrl: "https://instagram.com/x", description: "Weddings, birthdays, quinceañeras and corporate events" }); expect(result.deterministicScore).toBe(100); expect(result.quality).toBe("HIGH"); }); it("clamps outside-area weak leads", () => expect(scoreLead({ category: "Restaurant", city: "Miami", description: "Breakfast and lunch" }).deterministicScore).toBe(0)); });

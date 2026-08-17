@@ -1,0 +1,4 @@
+import { describe, expect, it } from "vitest";
+import { findDuplicate } from "@/lib/dedupe";
+const existing = [{ id: "1", provider: "GOOGLE", providerBusinessId: "abc", website: "https://www.example.com/path", phone: "(312) 555-1212", businessName: "Great Events LLC", city: "Chicago" }];
+describe("duplicate matching", () => { it("uses provider id first", () => expect(findDuplicate({ provider: "GOOGLE", providerBusinessId: "abc", businessName: "Renamed", city: "Skokie" }, existing)?.id).toBe("1")); it("normalizes domains", () => expect(findDuplicate({ website: "https://example.com", businessName: "Other", city: "Niles" }, existing)?.id).toBe("1")); it("normalizes phones", () => expect(findDuplicate({ phone: "+1 312-555-1212", businessName: "Other", city: "Niles" }, existing)?.id).toBe("1")); it("falls back to name and city", () => expect(findDuplicate({ businessName: "Great Events, LLC", city: "CHICAGO" }, existing)?.id).toBe("1")); });
