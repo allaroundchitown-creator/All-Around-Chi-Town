@@ -28,7 +28,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body { background: var(--black); color: var(--white); font-family: "Barlow", sans-serif; overflow-x: hidden; }
-    body.menu-open, body.modal-open { overflow: hidden; }
+    body.menu-open { overflow: hidden; }
     a { color: inherit; }
     button, input, select { font: inherit; }
     img, video { display: block; max-width: 100%; }
@@ -144,12 +144,9 @@
     .gallery-head .section-title { margin-top: 1rem; }
     .gallery-head .section-copy { max-width: 430px; }
     .video-wall { display: grid; gap: .7rem; grid-template-columns: repeat(12, 1fr); }
-    .video-card { background: var(--charcoal); border: 0; cursor: pointer; grid-column: span 4; overflow: hidden; padding: 0; position: relative; }
+    .video-card { background: var(--charcoal); grid-column: span 4; overflow: hidden; position: relative; }
     .video-card:nth-child(2), .video-card:nth-child(5) { transform: translateY(2.5rem); }
     .video-card video { aspect-ratio: 9/14; background: var(--ink); height: 100%; object-fit: cover; transition: transform .5s ease; width: 100%; }
-    .video-card:hover video { transform: scale(1.025); }
-    .video-card::after { align-items: center; background: rgba(7,7,7,.24); border: 1px solid rgba(255,255,255,.8); border-radius: 50%; color: var(--white); content: "PLAY"; display: flex; font: 800 .62rem "Barlow Condensed", sans-serif; height: 58px; justify-content: center; left: 50%; letter-spacing: .12em; pointer-events: none; position: absolute; top: 50%; transform: translate(-50%,-50%); transition: background .25s ease, color .25s ease; width: 58px; }
-    .video-card:hover::after { background: var(--gold); border-color: var(--gold); color: var(--black); }
     .gallery-more { margin-top: 5.5rem; text-align: center; }
 
     .packages { background: var(--white); color: var(--black); }
@@ -189,10 +186,22 @@
     .custom-media video { height: 100%; object-fit: cover; width: 100%; }
     .custom-badge { background: var(--gold); bottom: 1.5rem; color: var(--black); font: 900 .78rem "Barlow Condensed", sans-serif; left: 1.5rem; letter-spacing: .18em; padding: .9rem 1.1rem; position: absolute; text-transform: uppercase; }
 
-    .quote { background: var(--gold); color: var(--black); text-align: center; }
-    .stars { font-size: 1.1rem; letter-spacing: .25em; }
-    blockquote { font: 900 clamp(2.4rem, 6vw, 5.6rem)/.94 "Barlow Condensed", sans-serif; letter-spacing: -.03em; margin: 1.4rem auto; max-width: 1050px; text-transform: uppercase; }
-    .quote cite { font-style: normal; font-weight: 600; }
+    .testimonials { background: var(--ink); overflow: hidden; text-align: center; }
+    .testimonials .section-title { margin-top: 1rem; }
+    .reviews-track-wrap { margin-top: 4rem; overflow: hidden; position: relative; }
+    .reviews-track-wrap::before, .reviews-track-wrap::after { bottom: 0; content: ""; pointer-events: none; position: absolute; top: 0; width: 80px; z-index: 2; }
+    .reviews-track-wrap::before { background: linear-gradient(90deg, var(--ink), transparent); left: 0; }
+    .reviews-track-wrap::after { background: linear-gradient(-90deg, var(--ink), transparent); right: 0; }
+    .reviews-track { animation: scrollReviews 32s linear infinite; display: flex; gap: 1.5rem; width: max-content; }
+    .reviews-track:hover, .reviews-track:focus-within { animation-play-state: paused; }
+    @keyframes scrollReviews { to { transform: translateX(calc(-50% - .75rem)); } }
+    .review-card { background: var(--charcoal); border: 1px solid rgba(215,184,90,.12); flex-shrink: 0; padding: 2rem 2rem 1.75rem; position: relative; text-align: left; transition: border-color .3s; width: 320px; }
+    .review-card:hover { border-color: rgba(215,184,90,.35); }
+    .review-stars { color: var(--gold); font-size: .9rem; letter-spacing: .18em; margin-bottom: 1rem; }
+    .review-text { color: var(--white); font-size: 1.02rem; font-style: italic; line-height: 1.7; margin-bottom: 1.25rem; }
+    .review-author { color: var(--gold); font: 700 .7rem "Barlow Condensed", sans-serif; letter-spacing: .25em; text-transform: uppercase; }
+    .review-event { color: var(--muted); font-size: .78rem; margin-top: .25rem; }
+    .review-quote { color: rgba(215,184,90,.12); font: 900 3.5rem/1 "Barlow Condensed", sans-serif; position: absolute; right: 1.5rem; top: 1.15rem; }
 
     .availability { background: var(--ink); }
     .availability-grid { align-items: center; display: grid; gap: clamp(3rem, 8vw, 8rem); grid-template-columns: 1fr 1fr; }
@@ -217,11 +226,6 @@
 
     .mobile-cta { bottom: 0; display: none; left: 0; padding: .7rem; position: fixed; right: 0; z-index: 1200; }
     .mobile-cta .button { box-shadow: 0 8px 30px rgba(0,0,0,.5); width: 100%; }
-
-    .lightbox { align-items: center; background: rgba(0,0,0,.94); display: none; inset: 0; justify-content: center; padding: 2rem; position: fixed; z-index: 2000; }
-    .lightbox.open { display: flex; }
-    .lightbox video { max-height: 88vh; max-width: 92vw; }
-    .lightbox-close { background: var(--gold); border: 0; color: var(--black); cursor: pointer; font: 900 1rem "Barlow Condensed", sans-serif; height: 44px; position: fixed; right: 1.2rem; top: 1.2rem; width: 44px; }
 
     [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
     [data-reveal].visible { opacity: 1; transform: translateY(0); }
@@ -265,6 +269,8 @@
       .gallery-more { margin-top: 2rem; }
       .event-row { grid-template-columns: 1fr; }
       .custom-list { grid-template-columns: 1fr; }
+      .review-card { width: 280px; }
+      .reviews-track-wrap::before, .reviews-track-wrap::after { width: 34px; }
       .footer-brand { align-items: flex-start; }
     }
 
@@ -324,7 +330,7 @@
     <section class="section" id="experience">
       <div class="container experience-grid">
         <div class="experience-media" data-reveal>
-          <video src="video3.mov" autoplay muted loop playsinline></video>
+          <video src="0816.mp4" autoplay muted loop playsinline></video>
         </div>
         <div class="experience-copy" data-reveal>
           <p class="eyebrow">The 360 experience</p>
@@ -357,24 +363,24 @@
           <p class="section-copy">No stock moments. Just real people making the kind of videos they replay before the night is even over.</p>
         </div>
         <div class="video-wall">
-          <button class="video-card" type="button" data-src="Site Media/360 Loop.mp4" aria-label="Play 360 booth highlight">
-            <video data-video-src="Site Media/360 Loop.mp4" autoplay muted loop playsinline preload="none"></video>
-          </button>
-          <button class="video-card" type="button" data-src="Site Media/Wedding 5.15.26/10-20260515-205331.498693-slomo.mp4" aria-label="Play wedding highlight">
-            <video data-video-src="Site Media/Wedding 5.15.26/10-20260515-205331.498693-slomo.mp4" autoplay muted loop playsinline preload="none"></video>
-          </button>
-          <button class="video-card" type="button" data-src="Site Media/Bday Party 8.14.26/10-20260814-185500.615649-slomo.mp4" aria-label="Play birthday highlight">
-            <video data-video-src="Site Media/Bday Party 8.14.26/10-20260814-185500.615649-slomo.mp4" autoplay muted loop playsinline preload="none"></video>
-          </button>
-          <button class="video-card" type="button" data-src="Site Media/Imat Day/10-20260207-202547.185108-slomo.mp4" aria-label="Play event highlight">
-            <video data-video-src="Site Media/Imat Day/10-20260207-202547.185108-slomo.mp4" autoplay muted loop playsinline preload="none"></video>
-          </button>
-          <button class="video-card" type="button" data-src="Site Media/Ladies of the Light 2/10-20260501-193118.136056-slomo.mp4" aria-label="Play celebration highlight">
-            <video data-video-src="Site Media/Ladies of the Light 2/10-20260501-193118.136056-slomo.mp4" autoplay muted loop playsinline preload="none"></video>
-          </button>
-          <button class="video-card" type="button" data-src="Site Media/Wedding 3.23.24/10-20240608-213929.000115-slomo.mp4" aria-label="Play party highlight">
-            <video data-video-src="Site Media/Wedding 3.23.24/10-20240608-213929.000115-slomo.mp4" autoplay muted loop playsinline preload="none"></video>
-          </button>
+          <div class="video-card">
+            <video data-video-src="Site Media/360 Loop.mp4" muted playsinline preload="metadata"></video>
+          </div>
+          <div class="video-card">
+            <video data-video-src="Site Media/Wedding 5.15.26/10-20260515-205331.498693-slomo.mp4" muted playsinline preload="metadata"></video>
+          </div>
+          <div class="video-card">
+            <video data-video-src="Site Media/Bday Party 8.14.26/10-20260814-185500.615649-slomo.mp4" muted playsinline preload="metadata"></video>
+          </div>
+          <div class="video-card">
+            <video data-video-src="Site Media/Imat Day/10-20260207-202547.185108-slomo.mp4" muted playsinline preload="metadata"></video>
+          </div>
+          <div class="video-card">
+            <video data-video-src="Site Media/Ladies of the Light 2/10-20260501-193118.136056-slomo.mp4" muted playsinline preload="metadata"></video>
+          </div>
+          <div class="video-card">
+            <video data-video-src="Site Media/Wedding 3.23.24/10-20240608-213929.000115-slomo.mp4" muted playsinline preload="metadata"></video>
+          </div>
         </div>
         <div class="gallery-more"><a class="button button-ghost" href="gallery.html">View the full gallery <span aria-hidden="true">&rarr;</span></a></div>
       </div>
@@ -444,11 +450,102 @@
       </div>
     </section>
 
-    <section class="section quote">
+    <section class="section testimonials" id="testimonials" aria-labelledby="testimonials-title">
       <div class="container">
-        <div class="stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <blockquote>&ldquo;Everyone was on the booth all night.&rdquo;</blockquote>
-        <cite>Real All Around Chi-Town event guest</cite>
+        <p class="eyebrow">Heard from our clients</p>
+        <h2 class="section-title" id="testimonials-title">Real events.<br>Real memories.</h2>
+      </div>
+      <div class="reviews-track-wrap">
+        <div class="reviews-track">
+          <article class="review-card">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span>
+            <div class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">Everyone at the party could not stop talking about the 360 booth. The slow motion videos were absolutely incredible &mdash; my daughter's quincea&ntilde;era was perfect.</p>
+            <p class="review-author">Maria G.</p>
+            <p class="review-event">Quincea&ntilde;era &middot; Chicago, IL</p>
+          </article>
+          <article class="review-card">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span>
+            <div class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">Booked All Around Chi-Town for our company holiday party and it was a huge hit. The attendant was professional and the videos were sent instantly. 10/10.</p>
+            <p class="review-author">James T.</p>
+            <p class="review-event">Corporate Party &middot; Downtown Chicago</p>
+          </article>
+          <article class="review-card">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span>
+            <div class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">My sweet 16 was everything I dreamed of. The 360 booth had a line the entire night! The videos came out so clear and the attendant was super fun.</p>
+            <p class="review-author">Aaliyah R.</p>
+            <p class="review-event">Sweet 16 &middot; Oak Park, IL</p>
+          </article>
+          <article class="review-card">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span>
+            <div class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">Best decision we made for our wedding reception. Guests are still sending us their clips weeks later. Free delivery was a huge bonus &mdash; highly recommend!</p>
+            <p class="review-author">DeShawn &amp; Keisha W.</p>
+            <p class="review-event">Wedding Reception &middot; Naperville, IL</p>
+          </article>
+          <article class="review-card">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span>
+            <div class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">The setup was quick and the team was incredibly professional. Every single person at the graduation party got on that platform &mdash; it was the highlight of the night.</p>
+            <p class="review-author">Patricia M.</p>
+            <p class="review-event">Graduation Party &middot; Evanston, IL</p>
+          </article>
+          <article class="review-card">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span>
+            <div class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">All Around Chi-Town exceeded every expectation. The slow-motion videos are absolutely stunning and my guests haven't stopped posting them. Will book again!</p>
+            <p class="review-author">Tanya L.</p>
+            <p class="review-event">Birthday Party &middot; Chicago, IL</p>
+          </article>
+          <article class="review-card">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span>
+            <div class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">Everyone was on the booth all night.</p>
+            <p class="review-author">Real All Around Chi-Town event guest</p>
+          </article>
+          <article class="review-card">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span>
+            <div class="review-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">Absolutely amazing experience! The 360 photo booth was such a fun addition to our event and everyone&hellip;</p>
+            <p class="review-author">Cheyenne Alameda</p>
+            <p class="review-event">Verified Google review</p>
+          </article>
+
+          <article class="review-card" aria-hidden="true">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">Everyone at the party could not stop talking about the 360 booth. The slow motion videos were absolutely incredible &mdash; my daughter's quincea&ntilde;era was perfect.</p><p class="review-author">Maria G.</p><p class="review-event">Quincea&ntilde;era &middot; Chicago, IL</p>
+          </article>
+          <article class="review-card" aria-hidden="true">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">Booked All Around Chi-Town for our company holiday party and it was a huge hit. The attendant was professional and the videos were sent instantly. 10/10.</p><p class="review-author">James T.</p><p class="review-event">Corporate Party &middot; Downtown Chicago</p>
+          </article>
+          <article class="review-card" aria-hidden="true">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">My sweet 16 was everything I dreamed of. The 360 booth had a line the entire night! The videos came out so clear and the attendant was super fun.</p><p class="review-author">Aaliyah R.</p><p class="review-event">Sweet 16 &middot; Oak Park, IL</p>
+          </article>
+          <article class="review-card" aria-hidden="true">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">Best decision we made for our wedding reception. Guests are still sending us their clips weeks later. Free delivery was a huge bonus &mdash; highly recommend!</p><p class="review-author">DeShawn &amp; Keisha W.</p><p class="review-event">Wedding Reception &middot; Naperville, IL</p>
+          </article>
+          <article class="review-card" aria-hidden="true">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">The setup was quick and the team was incredibly professional. Every single person at the graduation party got on that platform &mdash; it was the highlight of the night.</p><p class="review-author">Patricia M.</p><p class="review-event">Graduation Party &middot; Evanston, IL</p>
+          </article>
+          <article class="review-card" aria-hidden="true">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">All Around Chi-Town exceeded every expectation. The slow-motion videos are absolutely stunning and my guests haven't stopped posting them. Will book again!</p><p class="review-author">Tanya L.</p><p class="review-event">Birthday Party &middot; Chicago, IL</p>
+          </article>
+          <article class="review-card" aria-hidden="true">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">Everyone was on the booth all night.</p><p class="review-author">Real All Around Chi-Town event guest</p>
+          </article>
+          <article class="review-card" aria-hidden="true">
+            <span class="review-quote" aria-hidden="true">&ldquo;</span><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="review-text">Absolutely amazing experience! The 360 photo booth was such a fun addition to our event and everyone&hellip;</p><p class="review-author">Cheyenne Alameda</p><p class="review-event">Verified Google review</p>
+          </article>
+        </div>
       </div>
     </section>
 
@@ -483,17 +580,10 @@
 
   <div class="mobile-cta"><a class="button button-gold" href="book.html#availability">Check Availability</a></div>
 
-  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Video preview">
-    <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close video">X</button>
-    <video id="lightbox-video" controls playsinline></video>
-  </div>
-
   <script>
     const nav = document.getElementById('nav');
     const menuButton = document.getElementById('menu-toggle');
     const navLinks = document.getElementById('nav-links');
-    const lightbox = document.getElementById('lightbox');
-    const lightboxVideo = document.getElementById('lightbox-video');
 
     window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 24), { passive: true });
 
@@ -525,34 +615,9 @@
     const videoObserver = new IntersectionObserver(entries => entries.forEach(entry => {
       if (entry.isIntersecting) {
         hydrateVideo(entry.target);
-        entry.target.play().catch(() => {});
-      } else if (entry.target.src) {
-        entry.target.pause();
       }
     }), { rootMargin: '300px' });
     document.querySelectorAll('[data-video-src]').forEach(video => videoObserver.observe(video));
-
-    document.querySelectorAll('.video-card').forEach(card => {
-      const preview = card.querySelector('video');
-      card.addEventListener('click', () => {
-        lightboxVideo.src = card.dataset.src;
-        lightbox.classList.add('open');
-        document.body.classList.add('modal-open');
-        lightboxVideo.play().catch(() => {});
-        document.getElementById('lightbox-close').focus();
-      });
-    });
-
-    const closeLightbox = () => {
-      lightbox.classList.remove('open');
-      document.body.classList.remove('modal-open');
-      lightboxVideo.pause();
-      lightboxVideo.removeAttribute('src');
-      lightboxVideo.load();
-    };
-    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click', event => { if (event.target === lightbox) closeLightbox(); });
-    document.addEventListener('keydown', event => { if (event.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox(); });
 
     const storySection = document.querySelector('.scroll-story');
     const storyBeats = [...document.querySelectorAll('.story-beat')];
