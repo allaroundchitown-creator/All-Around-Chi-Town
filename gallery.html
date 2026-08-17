@@ -539,6 +539,14 @@
   .page-breadcrumb a { color: var(--gold); text-decoration: none; }
 
   /* ── MASONRY GRID ── */
+  .gallery-section { background: var(--black); padding: 5rem 4rem; }
+  .gallery-toolbar { align-items: end; display: flex; justify-content: space-between; gap: 2rem; max-width: 1200px; margin: 0 auto 2rem; }
+  .gallery-filter { display: flex; flex-direction: column; gap: 0.55rem; min-width: min(100%, 280px); }
+  .gallery-filter label { color: var(--gold); font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; }
+  .gallery-filter select { appearance: none; background-color: var(--dark2); background-image: linear-gradient(45deg, transparent 50%, var(--gold) 50%), linear-gradient(135deg, var(--gold) 50%, transparent 50%); background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px); background-repeat: no-repeat; background-size: 6px 6px, 6px 6px; border: 1px solid rgba(201,168,76,0.28); border-radius: 0; color: var(--white); cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-size: 0.8rem; letter-spacing: 0.12em; min-height: 48px; outline: none; padding: 0 2.75rem 0 1rem; text-transform: uppercase; width: 100%; }
+  .gallery-filter select:focus { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(201,168,76,0.12); }
+  .gallery-filter select option { background: var(--dark2); color: var(--white); }
+  .gallery-toolbar .gallery-status { margin: 0; text-align: right; }
   .gallery-masonry { columns: 3; gap: 4px; max-width: 1200px; margin: 0 auto; }
   .gallery-masonry-item { break-inside: avoid; margin-bottom: 4px; position: relative; overflow: hidden; cursor: pointer; background: var(--dark2); }
   .gallery-masonry-item img, .gallery-masonry-item video, .gallery-masonry-item iframe { width: 100%; display: block; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
@@ -576,6 +584,10 @@
 
   @media (max-width: 900px) {
     .gallery-masonry { columns: 2; }
+    .gallery-section { padding: 5rem 1.5rem; }
+    .gallery-toolbar { align-items: stretch; flex-direction: column; gap: 1rem; }
+    .gallery-filter { min-width: 100%; }
+    .gallery-toolbar .gallery-status { text-align: left; }
     .page-hero { padding: 8rem 1.5rem 4rem; }
   }
   @media (max-width: 500px) {
@@ -611,8 +623,16 @@
 </div>
 
 <!-- GALLERY SECTION -->
-<section style="background:var(--black);padding:5rem 4rem;">
-  <p class="gallery-status" id="gallery-status"></p>
+<section class="gallery-section">
+  <div class="gallery-toolbar">
+    <div class="gallery-filter">
+      <label for="gallery-category">Browse by category</label>
+      <select id="gallery-category" aria-controls="gallery-grid">
+        <option value="all">All Events</option>
+      </select>
+    </div>
+    <p class="gallery-status" id="gallery-status"></p>
+  </div>
 
   <div class="gallery-masonry" id="gallery-grid" aria-live="polite"></div>
 
@@ -621,8 +641,8 @@
   </div>
 
   <div id="gallery-empty" class="gallery-empty" style="display:none;">
-    <h3>More Coming Soon</h3>
-    <p>Check back after our next event!</p>
+    <h3 id="gallery-empty-title">More Coming Soon</h3>
+    <p id="gallery-empty-copy">Check back after our next event!</p>
   </div>
 </section>
 
@@ -682,11 +702,40 @@ document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 const PAGE_SIZE = 18;
 const allMedia = (Array.isArray(window.BUNNY_MEDIA) ? window.BUNNY_MEDIA : [])
   .filter(video => video.ready)
-  .map(video => ({ ...video, type: 'video' }));
+  .map(video => ({ ...video, type: 'video', category: mediaCategory(video) }));
 let visibleCount = PAGE_SIZE;
+let activeCategory = 'all';
+
+const categoryOrder = ['Weddings', 'Community Events', 'Celebrations', 'Birthday Parties', 'Other Events'];
+
+function mediaCategory(media) {
+  const label = `${media.title || ''} ${media.name || ''} ${media.event || ''}`.toLowerCase();
+  if (/20240608|20260515|wedding/.test(label)) return 'Weddings';
+  if (/20260207|imat/.test(label)) return 'Community Events';
+  if (/20260501|ladies of the light/.test(label)) return 'Celebrations';
+  if (/20260613|20260814|bday|birthday|sweet 16|quince/.test(label)) return 'Birthday Parties';
+  return 'Other Events';
+}
+
+function refreshCategoryOptions() {
+  const select = document.getElementById('gallery-category');
+  const counts = allMedia.reduce((result, media) => {
+    result[media.category] = (result[media.category] || 0) + 1;
+    return result;
+  }, {});
+  const categories = categoryOrder.filter(category => counts[category]);
+  select.replaceChildren(
+    new Option(`All Events (${allMedia.length})`, 'all'),
+    ...categories.map(category => new Option(`${category} (${counts[category]})`, category))
+  );
+  if ([...select.options].some(option => option.value === activeCategory)) select.value = activeCategory;
+  else activeCategory = select.value = 'all';
+}
 
 function filteredMedia() {
-  return allMedia;
+  return activeCategory === 'all'
+    ? allMedia
+    : allMedia.filter(media => media.category === activeCategory);
 }
 
 function createGalleryCard(media) {
@@ -727,16 +776,26 @@ function renderGallery() {
   const grid = document.getElementById('gallery-grid');
   grid.replaceChildren(...shown.map(createGalleryCard));
 
-  document.getElementById('gallery-status').textContent = `Showing ${shown.length} of ${media.length} videos`;
+  const categoryLabel = activeCategory === 'all' ? 'all events' : activeCategory.toLowerCase();
+  document.getElementById('gallery-status').textContent = `Showing ${shown.length} of ${media.length} videos in ${categoryLabel}`;
   document.getElementById('gallery-load-more').hidden = shown.length >= media.length;
   document.getElementById('gallery-empty').style.display = media.length ? 'none' : 'block';
+  document.getElementById('gallery-empty-title').textContent = media.length ? 'More Coming Soon' : 'No Videos in This Category';
+  document.getElementById('gallery-empty-copy').textContent = media.length ? 'Check back after our next event!' : 'Choose another category to keep browsing.';
 }
+
+document.getElementById('gallery-category').addEventListener('change', event => {
+  activeCategory = event.target.value;
+  visibleCount = PAGE_SIZE;
+  renderGallery();
+});
 
 document.getElementById('gallery-load-more').addEventListener('click', () => {
   visibleCount += PAGE_SIZE;
   renderGallery();
 });
 
+refreshCategoryOptions();
 renderGallery();
 
 // Lightbox
@@ -781,8 +840,10 @@ async function loadFirebasePhotos() {
       const url  = await item.getDownloadURL();
       const name = item.name.toLowerCase();
       const isVideo = name.endsWith('.mp4') || name.endsWith('.mov') || name.endsWith('.webm');
-      allMedia.push({ event: 'Online Gallery', src: url, name: item.name, type: isVideo ? 'video' : 'photo' });
+      const media = { event: 'Online Gallery', src: url, name: item.name, type: isVideo ? 'video' : 'photo' };
+      allMedia.push({ ...media, category: mediaCategory(media) });
     }
+    refreshCategoryOptions();
     renderGallery();
   } catch(e) {
     console.log('Firebase photos not configured yet:', e.message);
