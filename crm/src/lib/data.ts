@@ -1,0 +1,4 @@
+import { demoLeads } from "./demo-data";
+import { hasDatabase, prisma } from "./prisma";
+export async function getLeads() { if (!hasDatabase()) return demoLeads.map((lead) => ({ ...lead })); try { return await prisma.lead.findMany({ orderBy: [{ deterministicScore: "desc" }, { createdAt: "desc" }] }); } catch { return demoLeads.map((lead) => ({ ...lead })); } }
+export async function getLead(id: string) { if (!hasDatabase()) { const lead = demoLeads.find((item) => item.id === id); return lead ? { ...lead, activities: [{ id: "demo-activity", type: "LEAD_DISCOVERED", notes: "Added to the pipeline", createdAt: new Date("2026-08-16") }], searchSources: [] } : null; } return prisma.lead.findUnique({ where: { id }, include: { activities: { orderBy: { createdAt: "desc" } }, searchSources: true } }); }

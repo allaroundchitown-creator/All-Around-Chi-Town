@@ -1,0 +1,5 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { hasDatabase, prisma } from "@/lib/prisma";
+const schema = z.object({ categories: z.array(z.string().trim().min(2).max(100)).min(1).max(50), locations: z.array(z.string().trim().min(2).max(100)).min(1).max(50), limits: z.object({ maxSearchesPerDay: z.number().int().min(1).max(100), maxBusinessesPerDay: z.number().int().min(1).max(500), maxWebsitePagesPerLead: z.number().int().min(1).max(6), maxAiQualificationsPerDay: z.number().int().min(0).max(200) }) });
+export async function PUT(request: Request) { if (!hasDatabase()) return NextResponse.json({ error: "Connect PostgreSQL to save settings." }, { status: 503 }); try { const data = schema.parse(await request.json()); await prisma.$transaction(Object.entries(data).map(([key, value]) => prisma.appSetting.upsert({ where: { key }, create: { key, value }, update: { value } }))); return NextResponse.json({ ok: true }); } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid settings" }, { status: 400 }); } }

@@ -1,0 +1,3 @@
+import { LEAD_STATUSES } from "./constants";
+export type LeadStatusValue = typeof LEAD_STATUSES[number];
+export function applyStatusUpdate(lead: { status: string; lastContactedAt?: Date | null; followUpCount?: number }, status: LeadStatusValue, now = new Date()): { status: LeadStatusValue; lastContactedAt: Date | null; followUpCount?: number } { if (!LEAD_STATUSES.includes(status)) throw new Error("Invalid lead status"); const contacted = ["CONTACTED", "RESPONDED", "INTERESTED", "QUOTE_SENT", "DEPOSIT_SENT"].includes(status); return { ...lead, status, lastContactedAt: contacted && !lead.lastContactedAt ? now : lead.lastContactedAt ?? null }; }

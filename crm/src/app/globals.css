@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+:root {
+  --background: #090909;
+  --foreground: #f7f4ed;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+button, a { cursor: pointer; }
+
+::selection { background: rgba(213, 179, 108, .25); }
+.page-shell { padding: 1.5rem 1.25rem 3rem; }
+.page-title { margin-top: .45rem; font-size: clamp(2rem, 4vw, 2.6rem); font-weight: 650; letter-spacing: -.045em; }
+.page-copy { margin-top: .65rem; max-width: 44rem; color: #8b8b91; font-size: .875rem; line-height: 1.6; }
+.eyebrow { color: #a99161; font-size: .68rem; font-weight: 650; letter-spacing: .16em; text-transform: uppercase; }
+.metric-card { border: 1px solid rgba(255,255,255,.075); border-radius: 1rem; background: #111; padding: 1.25rem; }
+.field { width: 100%; border: 1px solid rgba(255,255,255,.09); border-radius: .75rem; background: #0d0d0d; padding: .7rem .8rem; color: #eee; outline: none; }
+.field:focus { border-color: rgba(213,179,108,.6); }
+.quick-action { display: inline-flex; align-items: center; gap: .4rem; border: 1px solid rgba(255,255,255,.09); border-radius: .7rem; padding: .55rem .75rem; color: #bbb; font-size: .75rem; transition: .15s ease; }
+.quick-action:hover { border-color: rgba(213,179,108,.35); color: #e4c77f; }
+@media (min-width: 640px) { .page-shell { padding: 2rem 2rem 4rem; } }
+@media (min-width: 1024px) { .page-shell { padding: 2.5rem 2.5rem 4rem; } }

@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LeadStatus {
+  NEW
+  RESEARCHED
+  CONTACTED
+  RESPONDED
+  INTERESTED
+  QUOTE_SENT
+  DEPOSIT_SENT
+  BOOKED
+  LOST
+  NOT_INTERESTED
+}
+
+enum LeadQuality {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum LeadSourceType {
+  BUSINESS_SEARCH
+  WEBSITE_INQUIRY
+  MANUAL
+}
+
+enum ActivityType {
+  LEAD_DISCOVERED
+  RESEARCH_COMPLETED
+  EMAIL_SENT
+  INSTAGRAM_CONTACTED
+  PHONE_CALL
+  FOLLOW_UP
+  RESPONSE_RECEIVED
+  QUOTE_SENT
+  DEPOSIT_REQUEST_SENT
+  BOOKED
+  LOST
+  NOTE_ADDED
+  STATUS_CHANGED
+}
+
+enum SearchRunStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+model Lead {
+  id                    String           @id @default(cuid())
+  businessName          String
+  normalizedNameCity    String?          @unique
+  provider              String?
+  providerBusinessId    String?
+  category              String
+  address               String?
+  city                  String?
+  phone                 String?
+  normalizedPhone       String?          @unique
+  website               String?
+  normalizedDomain      String?          @unique
+  mapsUrl               String?
+  email                 String?
+  instagramUrl          String?
+  facebookUrl           String?
+  description           String?
+  serviceTypes          String[]         @default([])
+  eventTypes            String[]         @default([])
+  serviceArea           String?
+  rating                Float?
+  reviewCount           Int?
+  latitude              Float?
+  longitude             Float?
+  source                 LeadSourceType   @default(BUSINESS_SEARCH)
+  status                 LeadStatus       @default(NEW)
+  deterministicScore    Int              @default(0)
+  aiScore                Int?
+  aiReason               String?
+  recommendedContact    String?
+  quality                LeadQuality      @default(LOW)
+  fitReason              String?
+  notes                  String?
+  lastContactedAt        DateTime?
+  nextFollowUpAt         DateTime?
+  followUpCount          Int              @default(0)
+  estimatedDealValue    Decimal?          @db.Decimal(10, 2)
+  websiteFingerprint    String?
+  aiQualifiedFingerprint String?
+  aiQualifiedAt          DateTime?
+  contactName            String?
+  eventDate              DateTime?
+  eventLocation          String?
+  packageName            String?
+  inquiryMessage         String?
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+  activities             LeadActivity[]
+  searchSources          LeadSearchSource[]
+
+  @@unique([provider, providerBusinessId])
+  @@index([status, nextFollowUpAt])
+  @@index([quality, deterministicScore])
+  @@index([createdAt])
+}
+
+model LeadActivity {
+  id        String       @id @default(cuid())
+  leadId    String
+  type      ActivityType
+  notes     String?
+  createdAt DateTime     @default(now())
+  lead      Lead         @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId, createdAt])
+}
+
+model SearchQuery {
+  id         String             @id @default(cuid())
+  category   String
+  location   String
+  enabled    Boolean            @default(true)
+  lastRunAt  DateTime?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  leadSources LeadSearchSource[]
+  runs       SearchRun[]
+
+  @@unique([category, location])
+  @@index([enabled, lastRunAt])
+}
+
+model LeadSearchSource {
+  id            String      @id @default(cuid())
+  leadId        String
+  searchQueryId String
+  queryText     String
+  firstSeenAt   DateTime    @default(now())
+  lastSeenAt    DateTime    @default(now())
+  lead          Lead        @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  searchQuery   SearchQuery @relation(fields: [searchQueryId], references: [id], onDelete: Cascade)
+
+  @@unique([leadId, searchQueryId])
+}
+
+model SearchRun {
+  id              String          @id @default(cuid())
+  searchQueryId   String?
+  queryText       String
+  status          SearchRunStatus @default(RUNNING)
+  businessesFound Int             @default(0)
+  duplicateCount  Int             @default(0)
+  newLeadCount    Int             @default(0)
+  highCount       Int             @default(0)
+  mediumCount     Int             @default(0)
+  lowCount        Int             @default(0)
+  errorMessage    String?
+  startedAt       DateTime        @default(now())
+  completedAt     DateTime?
+  searchQuery     SearchQuery?    @relation(fields: [searchQueryId], references: [id], onDelete: SetNull)
+
+  @@index([startedAt])
+}
+
+model AppSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}

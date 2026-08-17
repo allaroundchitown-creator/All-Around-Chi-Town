@@ -1,0 +1,11 @@
+import { ArrowUpRight, CalendarClock, CircleDollarSign, Sparkles, UserPlus } from "lucide-react";
+import { FindLeads } from "@/components/find-leads";
+import { LeadTable } from "@/components/lead-table";
+import { getLeads } from "@/lib/data";
+export const dynamic = "force-dynamic";
+export default async function Home() {
+  const rawLeads = await getLeads(); const today = new Date(); today.setHours(23, 59, 59, 999); const pipelineStatuses = new Set(["RESPONDED", "INTERESTED", "QUOTE_SENT", "DEPOSIT_SENT"]);
+  const metrics = [{ label: "New leads", value: rawLeads.filter((l) => l.status === "NEW").length, helper: "Awaiting first review", icon: UserPlus }, { label: "High priority", value: rawLeads.filter((l) => l.quality === "HIGH").length, helper: "Best-fit opportunities", icon: Sparkles }, { label: "Follow up today", value: rawLeads.filter((l) => l.nextFollowUpAt && new Date(l.nextFollowUpAt) <= today).length, helper: "Keep conversations moving", icon: CalendarClock }, { label: "Pipeline value", value: `$${rawLeads.filter((l) => pipelineStatuses.has(l.status)).reduce((sum, l) => sum + Number(l.estimatedDealValue ?? 0), 0).toLocaleString()}`, helper: "Active opportunities", icon: CircleDollarSign }];
+  const leads = rawLeads.map((lead) => ({ ...lead, createdAt: lead.createdAt.toISOString(), nextFollowUpAt: lead.nextFollowUpAt?.toISOString() ?? null }));
+  return <div className="page-shell"><header className="flex flex-col gap-5 border-b border-white/8 pb-7 sm:flex-row sm:items-end sm:justify-between"><div><p className="eyebrow">Pipeline command center</p><h1 className="page-title">Your lead pipeline</h1><p className="page-copy">Find the right Chicagoland partners, prioritize the strongest opportunities, and keep every conversation moving.</p></div><FindLeads /></header><div className="grid gap-3 py-7 sm:grid-cols-2 xl:grid-cols-4">{metrics.map(({ label, value, helper, icon: Icon }) => <article key={label} className="metric-card"><div className="flex items-center justify-between"><p className="text-sm text-zinc-500">{label}</p><Icon size={16} className="text-[#b6965a]" /></div><p className="mt-5 text-3xl font-semibold tracking-tight">{value}</p><p className="mt-2 flex items-center gap-1 text-xs text-[#a99161]">{helper}<ArrowUpRight size={12} /></p></article>)}</div><LeadTable leads={leads} compact /></div>;
+}
