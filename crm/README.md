@@ -13,7 +13,7 @@ A low-cost lead discovery and lightweight CRM application for All Around Chi Tow
 - Optional AI-written email and Instagram drafts; drafts are never sent automatically
 - Rotating daily search queue with strict cost controls
 - Authenticated website inquiry endpoint that creates priority CRM leads
-- PostgreSQL schema, migration, seed data, tests, Vercel Cron configuration, and optional Basic Auth
+- PostgreSQL schema, migration, seed data, tests, Netlify scheduled/background functions, and optional Basic Auth
 
 ## Local setup
 
@@ -43,14 +43,14 @@ The app uses the official Places Text Search (New) endpoint and requests only th
 
 Create a server API key in the OpenAI platform and set `OPENAI_API_KEY`. AI is used only when a user clicks Generate Outreach (the qualification helper is ready for later use). The deterministic score remains authoritative and stored separately.
 
-## Vercel deployment
+## Netlify deployment
 
-1. Import this repository in Vercel and set the project Root Directory to `crm`.
-2. Attach a managed PostgreSQL provider (for example Neon through Vercel Marketplace) and set `DATABASE_URL`.
-3. Add the values from `.env.example` in Project Settings → Environment Variables.
+1. In Netlify, choose **Add new project → Import an existing project**, select this GitHub repository, and set the base directory to `crm`.
+2. Netlify detects Next.js automatically. The included `netlify.toml` runs `npm run build`, uses Node.js 20, and configures the scheduled discovery function.
+3. Add the values from `.env.example` in **Project configuration → Environment variables**. Do not place real secrets in `netlify.toml`.
 4. Generate long random values for `CRON_SECRET`, `INQUIRY_API_SECRET`, and `CRM_BASIC_AUTH_PASSWORD`.
 5. Deploy, then run `npm run db:migrate` and `npm run db:seed` against the production `DATABASE_URL` from a trusted local terminal or CI migration job.
-6. Vercel reads `vercel.json` and calls `/api/cron/discover` daily. The job processes only two least-recently-searched combinations per run and still respects daily settings.
+6. Netlify runs `daily-lead-discovery` at 15:00 UTC on published production deploys. It starts a background function so website enrichment can safely exceed the scheduled function's 30-second limit. The job processes only two least-recently-searched combinations and still respects daily settings.
 
 For stronger multi-user access later, replace Basic Auth with Clerk, Auth0, or an internal SSO provider and add user/audit models.
 
@@ -82,7 +82,7 @@ Defaults are intentionally conservative: 6 searches/day, 40 businesses/day, 3 we
 
 ## Expected low-volume monthly cost
 
-- Vercel: commonly $0 on the Hobby tier for a small private app, subject to current plan rules.
+- Netlify: suitable for a low-volume deployment on its current Free or credit-based plan; monitor function and bandwidth usage in the Netlify dashboard.
 - PostgreSQL: commonly $0 on a small managed free tier; use connection pooling for serverless deployments.
 - Google Places: usage-based. At the default 6 daily searches and requested field set, monitor the Google Cloud billing calculator and set a hard budget alert. Actual price depends on Google’s current SKU pricing.
 - OpenAI: optional and click-driven; short structured prompts generally stay well below a few dollars/month at low volume.
